@@ -1,0 +1,65 @@
+\section{The unknown time coefficient method}
+The second technique we will consider involves using a similar system of undetermined coefficients as in the one-dimensional IIM.
+
+Solving an identical problem as in section \ref{liIto}, we obtain the difference equation for the FTCS method at points away from the interface
+
+\begin{equation}
+    \frac{u_i^{k+1} - u_i^k}{\Delta t} = \kappa \frac{u_{i-1}^k - 2 u_i^k + u_{i+1}^k}{(\Delta x)^2}
+\end{equation}
+
+However at points near the interface, we wish to modify this equation in order to retain accuracy at the discontinuity.
+We do this by replacing the coefficients of $u_i^{k+1}$ and $u_i^k$ with coefficients which will be determined with the goal of minimizing truncation error at the interface.
+
+Let
+
+\begin{equation}
+    \frac{\partial u}{\partial t}(x_i,t_k) = \gamma_{k,1} u_i^k + \gamma_{k,2} u_i^{k+1} + C_k
+\end{equation}
+
+Expanding the values of $u$ on the right hand side as Taylor series about the grid crossing time $t=\tau$ gives
+
+\begin{align}
+    u(x_i,t_k) &= u^-(x_i,\tau) + (t_k - \tau)\frac{\partial u}{\partial t}^-(x_i,\tau) + \mathcal{O}(\Delta t^2) \\
+    u(x_i,t_{k+1}) &= u^+(x_i,\tau) + (t_{k+1} - \tau)\frac{\partial u}{\partial t}^+(x_i,\tau) + \mathcal{O}(\Delta t^2) \label{undeterminedT}
+\end{align}
+
+Since
+
+\begin{align}
+    u^+(x_i,\tau) &= u^-(x_i,\tau) + [u]_\tau \\
+    \frac{\partial u}{\partial t}^+(x_i,\tau) &= \frac{\partial u}{\partial t}^-(x_i,\tau) + \left[\frac{\partial u}{\partial t}\right]_\tau
+\end{align}
+
+We can rewrite equation \ref{undeterminedT} as
+
+\begin{equation}
+    u(x_i,t_{k+1}) = u^-(x_i,\tau) + [u]_\tau + (t_{k+1} - \tau)\left(\frac{\partial u}{\partial t}^-(x_i,\tau) + \left[\frac{\partial u}{\partial t}\right]_\tau\right) + \mathcal{O}(\Delta t^2)
+\end{equation}
+
+Substituting this back into the equation for $\partial u / \partial t$ gives that 
+
+\begin{align}
+    \phantom{\quad} & \frac{\partial u}{\partial t}(x_i,t_k) = \gamma_{k,1}\left\{u^-(x_i,\tau) + (t_k - \tau)\frac{\partial u}{\partial t}^-(x_i,\tau)\right\} \\
+    & + \gamma_{k,2} \left\{u^-(x_i,\tau) + [u]_\tau + (t_{k+1} - \tau) \left( \frac{\partial u}{\partial t}^-(x_i,\tau) + \left[\frac{\partial u}{\partial t} \right]_\tau \right) \right\} + C_k + \mathcal{O}(\Delta t^2)
+\end{align}
+
+By collecting coefficients of $\gamma$ we can see that if
+\begin{equation}
+    \left\{ \begin{aligned}
+        \gamma_{k,1} + \gamma_{k,2} & = 0 \\
+        \gamma_{k,1}(t_k - \tau) + \gamma_{k,2}(t_{k+1} - \tau) & = 1
+    \end{aligned} \right.
+\end{equation}
+
+and
+\begin{equation}
+    C_k = -\gamma_{k,2}\left([u]_\tau + (t_{k+1} - \tau)\left[\frac{\partial u}{\partial t}\right]_\tau \right)
+\end{equation}
+
+then
+
+\begin{equation}
+    \gamma_{k,1} u_i^k + \gamma_{k,2} u_i^{k+1} + C_k = \frac{\partial u}{\partial t}(x_i,t_k) + \mathcal{O}(\Delta t^2) .
+\end{equation}
+
+We can now solve the system of equations using standard techniques.

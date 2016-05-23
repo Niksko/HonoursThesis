@@ -1,0 +1,21 @@
+\part{Three methods for solving time-dependent PDEs}
+\section{Introduction}
+This chapter aims to compare three different methods that can be used to solve one-dimensional time-dependent PDEs.
+All of these methods are variants of the IIM with small adjustments made to the way they calculate the solution.
+
+The first method to be considered is proposed by Li and Ito \cite{liito06}.
+When solving problems that are time dependent, and extra correction is required to account for the possibility of a discontinuity in $\partial u / \partial t$ at the interface.
+Li and Ito's method uses Taylor series expansion to derive a constant term which is added to the difference equation.
+
+The second method is a new method that I am proposing called the undetermined time coefficient method.
+This method attempts to reduce error at the interface by solving for the finite difference coefficients that approximate $\partial u / \partial t$ in the difference equation in such a way as to minimize error at the interface.
+This modification is justified in an identical fashion to the modifications made to finite difference coefficients in the one-dimensional time-independent IIM discussed in section \ref{OneD}
+
+The third method due to Russell and Wang \cite{russellwang03} takes a different approach.
+The Russell and Wang method corrects errors near the interface purely by adding a constant forcing term to the difference equation, instead of modifying the finite difference coefficients as with the other two methods.
+
+The description of these three methods will be followed by some comments on how difficulties can arise when more complex discretisation schemes are employed than the simple spatially second order schemes employed in this project, or when multiple spatial dimensions are required.
+
+The next section will outline and solve some simple test problems with known solutions in order to assess the accuracy of the different methods
+
+The final section will consist of concluding remarks and some possible avenues for further research.

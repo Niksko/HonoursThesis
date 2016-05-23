@@ -1,0 +1,126 @@
+\section{The IIM for a simple 1D interface problem}
+\label{OneD}
+
+The basic outline for solving a problem using the IIM in 1D is to:
+
+\begin{itemize}
+    \item Determine jump conditions
+    \item Discretise the equation using a particular finite difference method
+    \item Separate domain into regular and irregular points
+    \item Set up and solve a system that minimizes the truncation error at the irregular points
+    \item Solve the modified finite difference equations
+\end{itemize}
+
+As an illustration, we will solve a second order linear constant coefficient ODE
+
+\begin{equation}
+    a\frac{d^2u}{dx^2} + b\frac{du}{dx} + cu = 0, 
+\end{equation}
+
+with $0\leq x \leq 1$, $a$, $b$ and $c$ arbitrary constants, and $u(0) = u_0$, $u(1) = u_1$.
+
+For this problem we will specify  particular jump conditions, but in general the jump conditions might be determined from the physical processes that causes the discontinuities in a problem.
+
+A jump condition defines the relationship between the function (and its derivatives) on either sides of the discontinuity (referred to as the interface). If the discontinuity occurs at $x = \alpha$ then we represent the jump condition for $u(x)$ by $[u]_\alpha$ where
+
+\begin{equation}
+    [u]_\alpha := u^+(\alpha) - u^-(\alpha),
+\end{equation}
+
+with
+
+\begin{align}
+    u^+(\alpha) := \lim_{x \to \alpha^+} u(x), \nonumber \\
+    u^-(\alpha) := \lim_{x \to \alpha^-} u(x) \nonumber,
+\end{align}
+
+and similarly for $[\frac{du}{dx}]_\alpha$ and $[\frac{d^2u}{dx^2}]_\alpha$.
+These conditions will be used to correct the finite difference equations near the interface to preserve the accuracy of the finite difference method.
+
+We can set up a grid of $x$ values in the usual way
+
+\begin{equation}
+    x_i = \Delta xi, \qquad i=0,1,2,\ldots,N \nonumber
+\end{equation}
+for some number of points $N$ with 
+\begin{equation}
+    \Delta x = \frac{1}{N} \nonumber.
+\end{equation}
+
+Note that the IIM works equally well regardless of whether the interface at $x = \alpha$ lies on a gridpoint.
+This feature is particularly useful when considering problems where the interface is moving, as it means creating a new mesh at each timestep is not necessary.
+
+In order to maintain accuracy with the least amount of extra computation and complication, the finite difference scheme remains unmodified for points that lie away from the interface.
+The points not immediately adjacent to the interface are referred to as {\bf regular} points, while the two points (or one point if the interface lies on a grid-point) closest to the interface are referred to as {\bf irregular} points.
+If we take 
+\begin{equation}
+    x_j, x_{j+1} : x_j \leq \alpha \leq x_{j+1} \nonumber
+\end{equation}
+to be the irregular points, then 
+\begin{equation}
+    x_i : i \neq j, j+1
+\end{equation}
+are the regular points.
+If we approximate the value of $u(x_i)$ by $u_i$ we can obtain the familiar three-point centered difference scheme for the regular points
+
+\begin{equation}
+    a\frac{u_{i+1} - 2u_i +u_{i-1}}{h^2} + b\frac{u_{i+1} - u_{i-1}}{2h} + cu_i = 0.
+\end{equation}
+If we collect terms based on $u$ values this becomes
+\begin{equation}
+    u_{i+1}\left(\frac{a}{h^2} + \frac{b}{2h}\right) + u_i\left(\frac{-2a}{h^2} + c\right) + u_{i-1}\left(\frac{a}{h^2} - \frac{b}{2h}\right) = 0.
+\end{equation}
+
+For irregular points, we must generate finite difference coefficients so as to minimize the truncation error at the interface.
+The general form of the finite difference equation is
+
+\begin{equation} \label{eq:gammaCoefficients}
+    \gamma_{l,1}u_{l-1} + \gamma_{l,2}u_l + \gamma_{l,3}u_{l+1} = C_l, \qquad l = j, j+1,
+\end{equation}
+with $\gamma_{l,1}$,$\gamma_{l,2}$,$\gamma_{l,3}$,$C_l$ constants to be determined.
+
+We determine the $\gamma_{l,m}$ so as to ensure that the truncation error $T_l$ at the point $x = \alpha$ matches the order of the finite difference method used.
+
+The truncation error is given by
+\begin{equation} \label{eq:truncationError}
+    T_l= \gamma_{l,1}u(x_{l-1}) + \gamma_{l,2}u(x_l) + \gamma_{l,3}u(x_{l+1}) - C_l - a\frac{d^2u}{dx^2} - b\frac{du}{dx} - cu
+\end{equation}
+for $l = j, j+1$.
+
+In order to evaluate this expression, it is necessary to take Taylor series expansions of each of the approximate terms and expand them around the point $x = \alpha$. This gives the following expressions:
+\begin{equation} \label{eq:taylorExpansions}
+\begin{split}
+    u(x_{j-1}) &  =  u^-(\alpha) + (x_{j-1} - \alpha)\frac{du}{dx}^-(\alpha) + \frac{1}{2}(x_{j-1} - \alpha)^2\frac{d^2u}{dx^2}^-(\alpha) + O(\Delta x^3), \\
+    u(x_{j}) & =  u^-(\alpha) + (x_{j} - \alpha)\frac{du}{dx}^-(\alpha) + \frac{1}{2}(x_{j}-\alpha)^2\frac{d^2u}{dx^2}^-(\alpha) + O(\Delta x^3), \\
+    u(x_{j+1}) & =  u^+(\alpha) + (x_{j+1} - \alpha)\frac{du}{dx}^+(\alpha) + \frac{1}{2}(x_{j+1}-\alpha)^2\frac{d^2u}{dx^2}^+(\alpha) + O(\Delta x^3).
+\end{split}
+\end{equation}
+
+
+But using our jump conditions we can express $u(x_{j+1})$ strictly in terms from the left hand side of the interface.
+Substituting this equation back into the equation for the truncation error and collecting like terms we can obtain and solve a linear system of equations for $\gamma$ that ensures the desired accuracy at $x=\alpha$.
+\begin{equation}
+    \left\{ \begin{aligned}
+        \gamma_{j,1} + \gamma_{j,2} + \gamma_{j,3} & = c \\
+        \gamma_{j,1}(x_{j-1}-\alpha) + \gamma_{j,2}(x_j - \alpha) + \gamma_{j,3}(x_{j+1} - \alpha) & = b \\
+        \frac{\gamma_{j,1}}{2}(x_{j-1}-\alpha)^2 + \frac{\gamma_{j,2}}{2}(x_j - \alpha)^2 + \frac{\gamma_{j,3}}{2}(x_{j+1} - \alpha)^2 & = a.
+    \end{aligned} \right. 
+\end{equation}
+We also require that 
+\begin{equation}
+    C_j = \gamma_{j,3}\left([u]_\alpha + (x_{j+1} - \alpha)\left[\frac{du}{dx}\right]_\alpha + \frac{1}{2}(x_{j+1} - \alpha)^2\left[\frac{d^2u}{dx^2}\right]_\alpha\right)
+\end{equation}
+to give $T_j = O(\Delta x^3)$.
+
+The derivation for the difference equation at $x = x_{j+1}$ is identical except now there are two points that fall to the right of the interface.
+Following the same process we see that the only difference is the $C_{j+1}$ term which is now
+\begin{align}
+    C_{j+1} & = \gamma_{j,2}\left([u]_\alpha + (x_{j+1} - \alpha)\left[\frac{du}{dx}\right]_\alpha + \frac{1}{2}(x_{j+1} - \alpha)^2\left[\frac{d^2u}{dx^2}\right]_\alpha\right) \\ \nonumber
+    & + \gamma_{j,3}\left([u]_\alpha + (x_{j+2} - \alpha)\left[\frac{du}{dx}\right]_\alpha + \frac{1}{2}(x_{j+2} - \alpha)^2\left[\frac{d^2u}{dx^2}\right]_\alpha\right) .
+\end{align}
+
+We now have a complete system of equations which when solved produces a second order accurate solution to our original problem.
+
+Although here we have considered a fairly simple problem as an illustration, the IIM can be completely generalized for non-constant coefficients that may include discontinuities and for higher orders with little difficulty.
+In addition, the IIM is easily implemented for higher order finite difference schemes \cite{liito06}.
+However, in order to keep problems simple, this project only considers first and second order finite difference schemes.

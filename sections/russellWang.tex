@@ -1,0 +1,31 @@
+\section{The Russell and Wang method}
+
+The final method is due to Russell and Wang \cite{russellwang03}.
+This method does not alter the coefficients of the difference equation at all, but instead adds constant correction terms based off of the jump conditions.
+
+As in the previous two sections, we are solving the heat equation with the conditions given in section \ref{liIto} using the FTCS method.
+
+As in those sections, our difference equation at points away from the interface is
+
+\begin{equation}
+    \frac{u_i^{k+1} - u_i^k}{\Delta t} = \kappa \frac{u_{i-1}^k - 2 u_i^k + u_{i+1}^k}{(\Delta x)^2}
+\end{equation}
+
+However this difference equation is not valid for points near the interface.
+
+In order to compute the values near the interface $u_j^k$ and $u_{j+1}^k$, observe that if $\overset{\sim}{u}_{j+1}^k$ is the value obtained by solving the system using values from the left of the interface as if there were no interface and corresponding jumps then
+
+\begin{equation}
+    u_{j+1}^k = \overset{\sim}{u}_{j+1}^k - [u] - (x_{j+1} - \alpha)\left[\frac{\partial u}{\partial x}\right] - \frac{1}{2}(x_{j+1} - \alpha)^2\left[\frac{\partial^2 u}{\partial x^2}\right] + \ldots
+\end{equation}
+
+and similarly for the point at $x_j$.
+Hence, we can effectively solve the system by adding the extra terms in the above expression to the RHS of the difference equation.
+
+Similarly, to correct for discontinuities in time we can use an identical derivation to find that
+
+\begin{equation}
+    u_j^{k+1} = \overset{\sim}{u}_j^{k+1} - \operatorname{sgn}\left(\frac{d \alpha}{d t}\right)\left\{[u] + (t_{k+1} - \tau)\left[\frac{\partial u}{\partial t}\right] + \frac{1}{2}(t_{k+1} - \tau)^2 \left[\frac{\partial^2 u}{\partial t^2}\right] + \ldots \right\}
+\end{equation}
+
+and similarly for $u_j^k$.

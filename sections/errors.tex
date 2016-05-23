@@ -1,0 +1,20 @@
+\section{Errors in the Li and Ito and undetermined time coefficient methods}
+
+The results obtained using the Li and Ito and undetermined time coefficient methods are not as accurate as was expected.
+Li and Ito present a problem in their book (\cite{liito06} pp. 202-203) where they solve the heat equation with a moving interface using their discretisation scheme, and they are able to obtain an accurate result which is confirmed to be second order accurate in time and space using a grid refinement analysis.
+However my attempts to reproduce this result using an even simpler initial condition than was considered in this example did not result in success as shown in the previous section.
+
+What this suggests is that although the Li and Ito method is fairly simple in its reasoning, the subtleties of implementation maybe be somewhat beyond what is discussed by Li and Ito in their book.
+
+The undetermined time coefficient method was an attempt to produce accurate results after the failure of the Li and Ito for the simple problems considered in this project.
+Much time was spent attempting to correct the Li and Ito method before moving on to the undetermined coefficient method, and further time was spent attempting to correct this method.
+Although these attempts were ultimately unsuccessful, some patterns were observed in the behavior of errors of the undetermined coefficient method.
+
+The first observation is related to the phenomenon of large 'spikes' occurring in the errors of the undetermined coefficient method when solving the advection equation with backwards differences and the wedge initial condition.
+Although accuracy of this method was ultimately poor, there appeared to be certain timesteps where the magnitude of the error would suddenly jump before returning to its normal rate of increase.
+By plotting the magnitude of the error against time, it was found that the errors tended to 'spike' when the value of $(\alpha - x_j+1)$ became small.
+That is, when the interface became very close to the right hand irregular point.
+
+The second observation is also related to the phenomenon of error 'spikes'.
+For some combinations of $\Delta t$ and $\Delta x$ it was observed that the timestep before a large spike, the condition number of the coefficient matrix of the system was observed to greatly increase, before returning to normal levels after the spike occurred.
+Interestingly, this ill-conditionedness of the matrix could be eliminated by reducing the size of $\Delta t$, but unfortunately the large error 'spikes' persisted despite the now consistently small condition number of the coefficient matrix.

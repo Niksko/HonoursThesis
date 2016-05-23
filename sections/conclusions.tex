@@ -1,0 +1,31 @@
+\section{Conclusions and future directions for the IIM}
+The IIM is a robust and capable method for solving differential equations involving interfaces.
+It is based off of the idea of correcting the finite difference scheme only at points near the interface by using Taylor series to ensure that accuracy is preserved.
+This allows it to be of similar computational difficulty as standard methods, but it enjoys far greater accuracy when discontinuities and singularities are present in a problem.
+This premise is relatively simple, but this simplicity makes it easy to modify and adapt the ideas presented in the original papers on the IIM to solve new and challenging problems or to improve the method in both accuracy and scope.
+
+The IIM has been shown to be applicable to the three major classes of differential equations in one or many spatial dimensions and with moving interfaces.
+The IIM also has a number of related methods such as the EJIIM, the MIB and finite volume based methods that attempt to improve or adapt the IIM while retaining its ability to accurately resolve discontinuities.
+A variety of applications of the IIM in the physical and natural sciences have been presented, all of which use the IIM to solve novel problems that would otherwise be difficult to solve due to discontinuous phenomena.
+
+Three different methods of correcting the IIM near the interface have been investigated.
+Although two of these methods proved to be inaccurate, the Li and Ito method has been shown to be accurate by others, and the undetermined coefficient method is entirely derived from the basic IIM which has also been shown to be accurate.
+This failure to implement a mathematically sound method exposes a potential downside to IIM based methods.
+
+Although the IIM is accurate, its reliance on locating and correcting the solution at the points where the interface crosses the grid is both time-consuming and difficult.
+The analysis in one-dimension for monotonically behaving interfaces is not difficult, however in two or three dimensions with non-convex interfaces this analysis could be difficult or computationally prohibitive.
+
+Some interesting behaviors in the errors of the Li and Ito and undetermined time coefficient methods were observed, and in the future it might be possible to ascertain the sources of these errors and implement these methods correctly.
+
+The Russell and Wang method proved to be the most effective method for solving interface problems, even though all of these methods should produce results of equal accuracy.
+
+The IIM has shown some promising developments in recent years which may warrant further research.
+
+Berthelson \cite{berthelson04} and Zhao et. al. \cite{zhaohouli12} have shown that it is possible to construct methods for elliptic problems where the coefficient matrix is symmetric.
+This allows for fast linear solvers to be used with relative ease, and could greatly decrease the amount of computation required to solve elliptic interface problems.
+
+Liang et. al. \cite{liangetal08} and Jiang et. al. \cite{jiangetal12} have developed a spectral method for use with interface problems that retains accuracy (ie. does not produce Gibbs phenomena) despite discontinuities.
+This method appear to be promising as it will allow for the nice error properties of spectral methods when solving interface problems.
+
+Despite the IIM being developed for hyperbolic problems relatively soon after its creation, there is a dearth of papers when compared with elliptic and parabolic problems.
+One possible explanation for this is given in section \ref{hyper} but it may be prudent to investigate the IIM for hyperbolic problems further to see whether there are any issues in implementation that are specific to hyperbolic problems.

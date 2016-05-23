@@ -1,0 +1,102 @@
+\section{The Li and Ito method} \label{liIto}
+The first method we will consider is presented in Li and Ito \cite{liito06}.
+We will illustrate this method by demonstrating its derivation using the heat equation and a forward time centered space differencing scheme, but it is equally applicable to other equations and differencing schemes.
+
+We wish to solve the equation
+\begin{equation}
+    \frac{\partial u}{\partial t} = \kappa \frac{\partial^2 u}{\partial x^2}
+\end{equation}
+
+on $0 \leq x \leq 1$, $t > 0$ and with given initial and boundary conditions
+
+\begin{equation}
+    u(x,0) = u_0(x), \qquad u(0,t) = a, \qquad u(1,t) = b,
+\end{equation}
+
+with jump conditions
+
+\begin{equation}
+    \left[u\right]_\alpha := u^+(\alpha) - u^-(\alpha) = w(t), \qquad
+    \left[\frac{\partial u}{\partial x}\right]_\alpha := \frac{\partial u}{\partial x}^+(\alpha) - \frac{\partial u}{\partial x}^-(\alpha) = v(t)
+\end{equation}
+
+at some moving interface
+\begin{equation}
+    x = \alpha(t).
+\end{equation}
+
+We can discretize this by choosing small stepsizes $\Delta x$ and $\Delta t$ and letting
+\begin{align}
+    x_i &= i \Delta x, \quad i = 0, 1, \ldots, N \quad x_N = 1 \\
+    t_k &= k \Delta t, \quad k = 0, 1, \ldots
+\end{align}
+
+Now we approximate the differential equation using forward differences in time and centered differences in space.
+As with the IIM for ODEs, we will use a standard discretisation scheme at regular points and a modified scheme near the interface.
+We will use the FTCS method in these overviews of the interface correction methods to illustrate the point.
+
+The difference equation we obtain for regular points is
+
+\begin{equation}
+    \frac{u_i^{k+1} - u_i^k}{\Delta t} = \kappa \frac{u_{i-1}^k - 2 u_i^k + u_{i+1}^k}{(\Delta x)^2}
+\end{equation}
+
+where $u_i^k$ is an approximation to $u(x_i,t_k)$.
+
+This gives that
+\begin{align}
+    u_i^{k+1} &= u_i^k + \frac{\kappa \Delta t}{\Delta x^2} \left(u_{i-1}^k - 2 u_i^k + u_{i+1}^k\right) \\
+    \Rightarrow \quad u_i^{k+1} &= u_{i-1}^k \frac{\kappa \Delta t}{\Delta x^2} + u_i^k \left(1 - 2 \frac{\kappa \Delta t}{\Delta x^2}\right) + u_{i+1}^k \frac{\kappa \Delta t}{\Delta x^2}
+\end{align}
+
+At irregular points, we can use the standard IIM method to discretise $\partial^2 u / \partial x^2$ but we require a different method to ensure that the discretisation for $\partial u / \partial t$ is second order accurate.
+Reduction of accuracy can occur when the interface crosses the grid line $x=x_i$ at some time $t=\tau$, $t_k < \tau < t_{k+1}$.
+This may result in a discontinuity in $\partial u / \partial t$ which means that
+
+\begin{equation}
+    \lim_{t \to \tau^+} \frac{\partial u}{\partial t}(t) \neq \lim_{t \to \tau^-} \frac{\partial u}{\partial t}(t)
+\end{equation}
+
+In order to correct for this we add a term to the approximation to $\partial u / \partial t$ which is derived in a similar way to the derivation of the IIM in section \ref{OneD}.
+
+We begin by expanding $u(x_i,t_{k+1})$ and $u(x_i,t_k)$ about the grid crossing time $t=\tau$.
+
+\begin{align}
+    u(x_i,t_k) &= u^-(x_i,\tau) + (t_k - \tau)\frac{\partial u}{\partial t}^-(x_i,\tau) + \mathcal{O}(\Delta t^2) \\
+    u(x_i,t_{k+1}) &= u^+(x_i,\tau) + (t_{k+1} - \tau)\frac{\partial u}{\partial t}^+(x_i,\tau) + \mathcal{O}(\Delta t^2) \label{liItoRightInterface}
+\end{align}
+
+Using the jump conditions we can write equation \ref{liItoRightInterface} as
+\begin{equation}
+    u(x_i,t_{k+1}) = u^-(x_i,\tau) + [u]_\tau + (t_{k+1} - \tau)\frac{\partial u}{\partial t}^-(x_i,\tau) + (t_{k+1} - \tau) \left[\frac{\partial u}{\partial t}\right]_\tau +  \mathcal{O}(\Delta t^2)
+\end{equation}
+
+Combining these two expressions gives
+\begin{equation}
+    u(x_i,t_{k+1}) - u(x_i,t_k) = \Delta t \frac{\partial u}{\partial t}^-(x_i,\tau) + [u]_\tau + (t_{k+1} - \tau) \left[\frac{\partial u}{\partial t}\right]_\tau + \mathcal{O}(\Delta t^2)
+\end{equation}
+
+Hence,
+\begin{equation}
+     \frac{\partial u}{\partial t}^-(x_i,\tau) =  \frac{u(x_i,t_{k+1}) - u(x_i,t_k)}{\Delta t} - \frac{[u]_\tau}{\Delta t} - \frac{(t_{k+1} - \tau)}{\Delta t} \left[\frac{\partial u}{\partial t}\right]_\tau + \mathcal{O}(\Delta t)
+\end{equation}
+
+We can determine $[u]_\tau$ from the jump conditions by setting $\alpha = \alpha(\tau)$, but $[\partial u / \partial t]_\tau$ requires some derivation.
+
+\begin{equation}
+    u^+(\alpha,t) - u^-(\alpha,t) = w(t)
+\end{equation}
+
+Differentiating with respect to $t$ gives
+
+\begin{equation}
+    \left(\frac{\partial u}{\partial x}^+(\alpha,t) - \frac{\partial u}{\partial x}^-(\alpha,t)\right)\frac{d \alpha}{d t} + \frac{\partial u}{\partial t}^+(\alpha,t) - \frac{\partial u}{\partial t}^-(\alpha,t) = w'(t)
+\end{equation}
+
+Hence
+
+\begin{equation}
+    \left[\frac{\partial u}{\partial t}\right] = w'(t) - \left[\frac{\partial u}{\partial x}\right] \frac{d \alpha}{d t}
+\end{equation}
+
+We can now solve the system using standard techniques.
